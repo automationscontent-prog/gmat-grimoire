@@ -167,7 +167,7 @@
   /* calendar */
   .cal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
   .cal-head .month { font-family: 'Cinzel', serif; font-size: 15px; letter-spacing: 2px; color: var(--gold-hi); flex: 1; text-align: center; }
-  .cal-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .cal-tools { display: flex; align-items: center; justify-content: flex-start; gap: 18px; margin-bottom: 12px; flex-wrap: wrap; }
   .seg { display: inline-flex; border: 1px solid rgba(201,162,74,.35); border-radius: 4px; overflow: hidden; }
   .segbtn { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 7px 14px; background: transparent; border: 0; color: var(--cream-2); cursor: pointer; }
   .segbtn.active { background: linear-gradient(170deg, #e9d28a, #c9a24a); color: #3a2708; }
@@ -382,7 +382,7 @@
 
 <div class="footer">
   Everything lives in this browser only. <button id="settingsBtn">Settings</button> · <button id="exportBtn">Export data</button> · <button id="resetBtn">Reset</button><br>
-  <span style="font-size:12px;opacity:.7">Build v28 · 23 Sep 2026 · press D for alignment guides</span>
+  <span style="font-size:12px;opacity:.7">Build v29 · 23 Sep 2026 · press D for alignment guides</span>
   <div class="settings" id="settings">
     <div class="grid">
       <label class="full">Gemini API key<input type="password" id="setKey" placeholder="paste your key, it stays in this browser"></label>
@@ -462,8 +462,8 @@ function placeSticky() {
   const logTop = kiwi.getBoundingClientRect().top - colTop;
   const rowTop = quest.getBoundingClientRect().bottom - board.top + 14;
   rs.setProperty("--logTop", logTop + "px"); rs.setProperty("--rowTop", rowTop + "px");
-  const lowH = 340; rs.setProperty("--lowh", lowH + "px");
-  rs.setProperty("--boardH", Math.max(innerHeight, rowTop + lowH + 24) + "px");
+  const lowH = Math.max(340, innerHeight - rowTop - 24); rs.setProperty("--lowh", lowH + "px");   // boxes fill to the bottom, calendar sits exactly one gap below
+  rs.setProperty("--boardH", (rowTop + lowH + 24) + "px");
   rs.setProperty("--s3h", Math.max(380, s1.offsetHeight) + "px");
   rs.setProperty("--D", SLIDE_D + "px");
   slide();
