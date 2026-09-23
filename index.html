@@ -194,7 +194,13 @@
   .heat { display: flex; flex-direction: column; gap: 6px; }
   .heat .h { padding: 7px 10px; display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; border-radius: 4px; background: rgba(255,240,210,.04); border: 1px solid rgba(201,162,74,.18); }
   .heat .h b { display: block; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 15px; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .heat .h b small { font-family: 'Cinzel', serif; font-size: 8.5px; letter-spacing: 1.5px; color: var(--cream-3); margin-left: 6px; }
+  .heat .g { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 6px 4px 5px; margin-top: 8px; border-bottom: 1px solid var(--gold-line); }
+  .heat .g:first-child { margin-top: 0; }
+  .heat .g b { font-family: 'Cinzel', serif; font-size: 10.5px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-hi); }
+  .heat .g small { color: var(--cream-2); font-size: 13px; font-style: italic; }
+  .heat .g .bar { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: rgba(239,227,200,.12); margin-top: 3px; overflow: hidden; }
+  .heat .g .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--moss), var(--gold), var(--oxblood-2)); }
+  .heat .h { margin-left: 10px; }
   .heat .h small { color: var(--cream-2); font-size: 13px; font-style: italic; }
   .heat .h .bar { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: rgba(239,227,200,.1); margin-top: 2px; overflow: hidden; }
   .heat .h .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--moss), var(--gold), var(--oxblood-2)); }
@@ -382,7 +388,7 @@
 
 <div class="footer">
   Everything lives in this browser only. <button id="settingsBtn">Settings</button> · <button id="exportBtn">Export data</button> · <button id="resetBtn">Reset</button><br>
-  <span style="font-size:12px;opacity:.7">Build v29 · 23 Sep 2026 · press D for alignment guides</span>
+  <span style="font-size:12px;opacity:.7">Build v30 · 23 Sep 2026 · press D for alignment guides</span>
   <div class="settings" id="settings">
     <div class="grid">
       <label class="full">Gemini API key<input type="password" id="setKey" placeholder="paste your key, it stays in this browser"></label>
@@ -575,9 +581,17 @@ addEventListener("scroll", () => { dim.style.background = `rgba(6,3,2,${Math.min
    ========================================================= */
 const TOPICS = {
   "Quant": ["Arithmetic & Number Properties", "Algebra", "Word Problems", "Rates & Work", "Ratios & Percents", "Statistics & Counting"],
-  "Verbal": ["Reading Comprehension", "Critical Reasoning: Assumption", "Critical Reasoning: Strengthen/Weaken", "Critical Reasoning: Inference", "Bold Face & Structure"],
+  "Verbal": ["RC: Main Idea & Purpose", "RC: Detail & Inference", "RC: Structure & Function", "CR: Assumption", "CR: Strengthen / Weaken", "CR: Inference", "CR: Bold Face"],
   "Data Insights": ["Data Sufficiency", "Multi-Source Reasoning", "Table Analysis", "Graphics Interpretation", "Two-Part Analysis"],
 };
+/* the four main topics shown in Where the Dragons Are */
+const GROUPS = [
+  { name: "Quant", topics: TOPICS["Quant"] },
+  { name: "Reading Comprehension", topics: TOPICS["Verbal"].filter(x => x.startsWith("RC:")) },
+  { name: "Critical Reasoning", topics: TOPICS["Verbal"].filter(x => x.startsWith("CR:")) },
+  { name: "Data Insights", topics: TOPICS["Data Insights"] },
+];
+const TOPIC_MIGRATE = { "Reading Comprehension": "RC: Main Idea & Purpose", "Critical Reasoning: Assumption": "CR: Assumption", "Critical Reasoning: Strengthen/Weaken": "CR: Strengthen / Weaken", "Critical Reasoning: Inference": "CR: Inference", "Bold Face & Structure": "CR: Bold Face" };
 const SHORT = { "Quant": "Quant", "Verbal": "Verbal", "Data Insights": "DI" };
 const OPENERS = [
   "Kiwi has stoked the fire. The Grimoire awaits.",
@@ -603,6 +617,7 @@ const CHAT_REPLIES = {
 const LS_KEY = "gmat-grimoire-v1", AI_KEY = "gmat-grimoire-ai";
 const defaultState = () => ({ sessions: [], moods: [], testDate: "", freezes: 0, skips: {}, accepted: {}, swapIndex: 0, quest: null, calMode: "month", showPlan: true });
 let S = load();
+S.sessions.forEach(s => { if (TOPIC_MIGRATE[s.topic]) s.topic = TOPIC_MIGRATE[s.topic]; });
 function load() { try { const raw = localStorage.getItem(LS_KEY); if (raw) return { ...defaultState(), ...JSON.parse(raw) }; } catch (e) {} return defaultState(); }
 function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
 let AICFG = { key: "", model: "gemini-3.5-flash-lite" };
@@ -745,12 +760,18 @@ function renderCalendar() {
 }
 function renderHeat() {
   const st = topicStats(14); const wrap = $("heat"); wrap.innerHTML = "";
-  const rows = Object.entries(st).map(([topic, v]) => ({ topic, sec: v.sec, done: v.done, rate: v.done ? v.wrong / v.done : null }))
-    .sort((a, b) => ((b.rate ?? -1) - (a.rate ?? -1)) || (b.done - a.done));
-  for (const r of rows) {
-    const el = document.createElement("div"); el.className = "h";
-    el.innerHTML = `<b>${r.topic}<small>${SHORT[r.sec]}</small></b><small>${r.done ? `${Math.round(r.rate * 100)}% wrong · ${r.done}q` : "no data yet"}</small><div class="bar"><i style="width:${r.done ? Math.min(100, r.rate * 100 * 2) : 0}%"></i></div>`;
-    wrap.appendChild(el);
+  const pct = (w, d) => Math.round(w / d * 100);
+  for (const g of GROUPS) {
+    const done = g.topics.reduce((a, tp) => a + st[tp].done, 0), wrong = g.topics.reduce((a, tp) => a + st[tp].wrong, 0);
+    const head = document.createElement("div"); head.className = "g";
+    head.innerHTML = `<b>${g.name}</b><small>${done ? `${pct(wrong, done)}% wrong · ${done}q` : "no data yet"}</small><div class="bar"><i style="width:${done ? Math.min(100, pct(wrong, done) * 2) : 0}%"></i></div>`;
+    wrap.appendChild(head);
+    const rows = g.topics.map(tp => ({ topic: tp, done: st[tp].done, rate: st[tp].done ? st[tp].wrong / st[tp].done : null })).sort((a, b) => ((b.rate ?? -1) - (a.rate ?? -1)) || (b.done - a.done));
+    for (const r of rows) {
+      const el = document.createElement("div"); el.className = "h";
+      el.innerHTML = `<b>${r.topic}</b><small>${r.done ? `${Math.round(r.rate * 100)}% wrong · ${r.done}q` : "no data yet"}</small><div class="bar"><i style="width:${r.done ? Math.min(100, r.rate * 100 * 2) : 0}%"></i></div>`;
+      wrap.appendChild(el);
+    }
   }
 }
 function renderLessons() {
