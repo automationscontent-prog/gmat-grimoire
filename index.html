@@ -55,21 +55,21 @@
   }
   @keyframes flicker { 0%,100% { opacity: .78 } 8% { opacity: .95 } 19% { opacity: .72 } 31% { opacity: 1 } 44% { opacity: .82 } 57% { opacity: .92 } 68% { opacity: .7 } 80% { opacity: .94 } 91% { opacity: .8 } }
   @keyframes flicker2 { 0%,100% { opacity: .55 } 13% { opacity: .75 } 27% { opacity: .5 } 39% { opacity: .8 } 55% { opacity: .6 } 71% { opacity: .85 } 86% { opacity: .55 } }
-  .firebox { position: absolute; left: var(--hl); top: var(--ht); width: var(--hwp); height: var(--hhp); overflow: hidden; border-radius: 44% 44% 0 0 / 36% 36% 0 0; }
+  .firebox { position: absolute; left: var(--hl); top: var(--ht); width: var(--hwp); height: var(--hhp); overflow: hidden; border-radius: 50% 50% 0 0 / 30% 30% 0 0; }
   #fire { position: absolute; inset: 0; width: 100%; height: 100%; }
   #motes { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 
   /* candles, lanterns, window: positioned by JS in image fractions */
   .light { position: absolute; transform: translate(-50%, -50%); pointer-events: none; }
   .light .glow { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; mix-blend-mode: screen; }
-  .light.candle .glow { width: calc(var(--fh) * 3.2); height: calc(var(--fh) * 3.2); background: radial-gradient(circle, rgba(255,190,90,.55) 0%, rgba(255,140,50,.18) 40%, transparent 70%); animation: cglow var(--d, 1.3s) infinite ease-in-out alternate; }
+  .light.candle .glow { width: calc(var(--fh) * 3.2); height: calc(var(--fh) * 3.2); margin-top: calc(var(--fh) * -.35); background: radial-gradient(circle, rgba(255,190,90,.55) 0%, rgba(255,140,50,.18) 40%, transparent 70%); animation: cglow var(--d, 1.3s) infinite ease-in-out alternate; }
   .light.candle .flame {
-    position: absolute; left: 50%; top: 50%; width: calc(var(--fh) * .48); height: var(--fh); transform: translate(-50%, -50%);
+    position: absolute; left: 50%; top: 50%; width: calc(var(--fh) * .34); height: var(--fh); transform: translate(-50%, -84%);
     background: radial-gradient(ellipse at 50% 85%, #fffbe6 0%, #ffe08a 30%, #ff9a2a 62%, rgba(255,120,30,0) 78%);
     border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; filter: blur(.4px); transform-origin: 50% 100%;
     animation: cflame var(--d, 1.3s) infinite ease-in-out alternate;
   }
-  @keyframes cflame { 0% { transform: translate(-50%, -50%) scale(1, 1) rotate(-3deg) } 35% { transform: translate(-47%, -52%) scale(.9, 1.1) rotate(4deg) } 70% { transform: translate(-52%, -49%) scale(1.06, .94) rotate(-2deg) } 100% { transform: translate(-50%, -51%) scale(.96, 1.05) rotate(2deg) } }
+  @keyframes cflame { 0% { transform: translate(-50%, -84%) scale(1, 1) rotate(-3deg) } 35% { transform: translate(-47%, -86%) scale(.92, 1.1) rotate(4deg) } 70% { transform: translate(-52%, -83%) scale(1.05, .95) rotate(-2deg) } 100% { transform: translate(-50%, -85%) scale(.97, 1.05) rotate(2deg) } }
   @keyframes cglow { 0% { opacity: .6 } 40% { opacity: 1 } 100% { opacity: .75 } }
   .light.lantern .glow { width: calc(var(--u) * 12); height: calc(var(--u) * 12); background: radial-gradient(circle, rgba(255,170,70,.5) 0%, rgba(255,130,40,.16) 40%, transparent 70%); animation: lglow var(--d, 3.1s) infinite ease-in-out alternate; }
   @keyframes lglow { 0% { opacity: .55; transform: translate(-50%,-50%) scale(1) } 50% { opacity: .95; transform: translate(-50%,-50%) scale(1.06) } 100% { opacity: .7; transform: translate(-50%,-50%) scale(.98) } }
@@ -77,6 +77,9 @@
   @keyframes breathe { 0% { opacity: .5 } 100% { opacity: 1 } }
 
   .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 75% at 50% 55%, transparent 50%, rgba(0,0,0,.62) 100%), linear-gradient(180deg, rgba(0,0,0,.5), transparent 26%, transparent 74%, rgba(0,0,0,.5)); pointer-events: none; }
+  body.debug .light { width: 10px; height: 10px; outline: 2px solid #0f0; }
+  body.debug .firebox { outline: 2px solid #0ff; }
+  body.debug .stage { outline: 3px solid #f0f; }
   .dim { position: absolute; inset: 0; background: #06030200; pointer-events: none; transition: background .2s linear; }
   @media (prefers-reduced-motion: reduce) { .room .photo.lit, .haze, .floor-glow, .light .glow, .light .flame, .light.window { animation: none; } }
 
@@ -406,7 +409,7 @@
 
 <div class="footer">
   Everything lives in this browser only. <button id="exportBtn">Export data</button> · <button id="resetBtn">Reset</button><br>
-  <span style="font-size:12px;opacity:.7">Room photograph: The Metropolitan Museum of Art, via Unsplash.</span>
+  <span style="font-size:12px;opacity:.7">Build v9 · 23 Sep 2026 12:55 · press D to show alignment guides</span>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -421,17 +424,17 @@ document.getElementById("photo").src = ROOM_SRC;
    HEARTH GEOMETRY — where the fireplace opening sits in the photo
    (fractions of the image), projected through object-fit: cover
    ========================================================= */
-const HEARTH = { l: 0.472, r: 0.638, t: 0.49, b: 0.745 };
-const FIRE = { cx: 0.583, base: 0.705, half: 0.048 };   // where the painted flames sit (image fractions)
+const HEARTH = { l: 0.525, r: 0.617, t: 0.50, b: 0.685 };
+const FIRE = { cx: 0.578, base: 0.672, half: 0.028 };   // where the painted flames sit (image fractions)
 // light sources in the photograph (fractions of the image)
 const LIGHTS = [   // measured from the pixels: centre and height of each flame, as image fractions
   { k: "candle", x: .6445, y: .2384, h: .0179, d: 1.25 },  // mantel candle
-  { k: "candle", x: .3310, y: .4274, h: .0110, d: 1.4 },   // left candelabra
-  { k: "candle", x: .3415, y: .4265, h: .0179, d: 1.1 },
+  { k: "candle", x: .3310, y: .4274, h: .0125, d: 1.4 },   // left candelabra
+  { k: "candle", x: .3415, y: .4232, h: .0125, d: 1.1 },
   { k: "candle", x: .3520, y: .4292, h: .0125, d: 1.3 },
-  { k: "candle", x: .8545, y: .4032, h: .0179, d: 1.3 },   // right candelabra
-  { k: "candle", x: .8725, y: .3943, h: .0287, d: 1.5 },
-  { k: "candle", x: .8895, y: .4005, h: .0197, d: 1.2 },
+  { k: "candle", x: .8545, y: .4032, h: .0185, d: 1.3 },   // right candelabra
+  { k: "candle", x: .8725, y: .3885, h: .0185, d: 1.5 },
+  { k: "candle", x: .8895, y: .4005, h: .0185, d: 1.2 },
   { k: "candle", x: .9790, y: .5385, h: .0341, d: 1.35 },  // desk candle
   { k: "lantern", x: .4470, y: .3073, d: 3.4 },            // left lantern
   { k: "lantern", x: .6710, y: .2778, d: 2.8 },            // right lantern
@@ -489,16 +492,16 @@ addEventListener("resize", placeHearth);
   const flames = [], embers = [], smoke = [];
   const rnd = (a, b) => a + Math.random() * (b - a);
   const tri = () => (Math.random() + Math.random() - 1);
-  const K = () => H / 280;
+  const K = () => H / 200;
 
   const FX = () => (FIRE.cx - HEARTH.l) / (HEARTH.r - HEARTH.l) * W;
   const FB = () => (FIRE.base - HEARTH.t) / (HEARTH.b - HEARTH.t) * H;
   const FH = () => FIRE.half / (HEARTH.r - HEARTH.l) * W;
   function spawnFlame() {
     const cx = FX(), base = FB(), off = tri();
-    flames.push({ x: cx + off * FH() * 1.1, y: base + rnd(-4, 8), vx: rnd(-.2, .2), vy: (rnd(-2.2, -3.4) - (1 - Math.abs(off)) * 3.0) * K(), r: rnd(12, 26) * K(), life: 0, speed: rnd(.012, .02), wob: rnd(0, 6.28) });
+    flames.push({ x: cx + off * FH() * 1.1, y: base + rnd(-4, 8), vx: rnd(-.2, .2), vy: (rnd(-1.6, -2.4) - (1 - Math.abs(off)) * 2.2) * K(), r: rnd(7, 15) * K(), life: 0, speed: rnd(.014, .022), wob: rnd(0, 6.28) });
   }
-  function spawnEmber() { embers.push({ x: FX() + tri() * FH() * 1.6, y: FB() - 8 * K(), vx: rnd(-.4, .4), vy: rnd(-1.1, -2.2) * K(), r: rnd(1, 2.2) * K(), life: 0, speed: rnd(.006, .012), wob: rnd(0, 6.28) }); }
+  function spawnEmber() { embers.push({ x: FX() + tri() * FH() * 1.2, y: FB() - 8 * K(), vx: rnd(-.3, .3), vy: rnd(-1.0, -1.8) * K(), r: rnd(.8, 1.6) * K(), life: 0, speed: rnd(.006, .012), wob: rnd(0, 6.28) }); }
   function spawnSmoke() { smoke.push({ x: FX() + tri() * FH() * 1.5, y: FB() - H * .35, vx: rnd(-.2, .2), vy: rnd(-.4, -.8) * K(), r: rnd(16, 30) * K(), life: 0, speed: rnd(.006, .01) }); }
 
   function drawLogs(t) {
@@ -534,7 +537,7 @@ addEventListener("resize", placeHearth);
     if (!W) fireResize();
     const dt = Math.min((now - last) / 16.67, 2); last = now; const t = now / 1000;
     ctx.clearRect(0, 0, W, H);
-    const bg = ctx.createRadialGradient(FX(), FB(), 10, FX(), FB(), W * .45);
+    const bg = ctx.createRadialGradient(FX(), FB(), 6, FX(), FB(), W * .5);
     const pulse = .12 + .05 * Math.sin(t * 7) + .03 * Math.sin(t * 13.3);
     bg.addColorStop(0, `rgba(255,120,30,${pulse})`); bg.addColorStop(.5, "rgba(200,60,10,.05)"); bg.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
@@ -547,7 +550,7 @@ addEventListener("resize", placeHearth);
       ctx.fillStyle = g; ctx.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
     }
 
-    const NF = Math.round(Math.min(1, (W * H) / 120000) * 200); while (flames.length < NF) spawnFlame();
+    const NF = Math.round(Math.min(1, (W * H) / 40000) * 140); while (flames.length < NF) spawnFlame();
     ctx.save(); ctx.globalCompositeOperation = "lighter";
     for (let i = flames.length - 1; i >= 0; i--) {
       const p = flames[i]; p.life += p.speed * dt;
@@ -611,6 +614,9 @@ addEventListener("resize", placeHearth);
     sc.style.transform = `translate(${(-dx * 14).toFixed(1)}px, ${(-dy * 10).toFixed(1)}px)`;
   }, { passive: true });
 })();
+
+/* debug: D toggles alignment guides around every light and the fire box */
+addEventListener("keydown", e => { if (e.key === "d" || e.key === "D") document.body.classList.toggle("debug"); });
 
 /* scroll dims the room so the desk reads clearly */
 const dim = document.getElementById("dim");
