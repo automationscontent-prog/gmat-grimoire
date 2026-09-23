@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The GMAT Grimoire</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%236b1a22'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='18' fill='%23f1d98a'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
@@ -17,7 +18,7 @@
     --hx: 40vw; --hy: 50vh; --hw: 30vw; --hh: 28vh; --hcx: 55vw; --hcy: 64vh;
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: auto; }
   body { margin: 0; min-height: 100vh; overflow-x: hidden; background: #0b0705; color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; font-size: 18px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
   ::selection { background: rgba(201,162,74,.35); }
 
@@ -59,7 +60,8 @@
   .stack { display: flex; flex-direction: column; gap: 14px; }
   #s3 { height: var(--s3h, calc(100vh - 262px)); min-height: 380px; }
   #s3 .panel { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-  .slide { position: absolute; will-change: transform; }
+  .slide { position: absolute; will-change: transform; transform: translate3d(0,0,0); }
+  .slide .panel { backdrop-filter: none; -webkit-backdrop-filter: none; background: linear-gradient(165deg, rgba(28,16,10,.9) 0%, rgba(14,8,5,.94) 100%); }
   .logslide { left: 0; right: 0; top: var(--logTop, 160px); }
   .lower { left: 3vw; right: 3vw; top: var(--rowTop, 746px); display: grid; grid-template-columns: 1fr 1fr; gap: 24px; z-index: 1; }
   .logslide { z-index: 2; }
@@ -77,7 +79,7 @@
   .stat small { display: block; font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--cream-2); margin-top: 5px; text-shadow: 0 1px 4px #000; }
   .stat .freeze { font-size: 12px; color: var(--cream-3); margin-left: 6px; letter-spacing: 0; }
 
-  .panel { position: relative; border-radius: 6px; padding: 20px 22px 22px; background: var(--glass); backdrop-filter: blur(18px) saturate(1.15); -webkit-backdrop-filter: blur(18px) saturate(1.15); border: 1px solid rgba(201,162,74,.26); box-shadow: 0 40px 70px -24px rgba(0,0,0,.95), 0 10px 24px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,225,170,.10); }
+  .panel { position: relative; border-radius: 6px; padding: 20px 22px 22px; background: var(--glass); backdrop-filter: blur(12px) saturate(1.1); -webkit-backdrop-filter: blur(12px) saturate(1.1); border: 1px solid rgba(201,162,74,.26); box-shadow: 0 40px 70px -24px rgba(0,0,0,.95), 0 10px 24px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,225,170,.10); }
   .panel::before { content: ""; position: absolute; inset: 7px; border: 1px solid rgba(201,162,74,.16); border-radius: 3px; pointer-events: none; }
   .panel > * { position: relative; }
   .panel h2 { font-family: 'Cinzel', serif; font-weight: 600; font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin: 0 0 14px; display: flex; align-items: center; gap: 12px; white-space: nowrap; }
@@ -182,18 +184,25 @@
   .check input { width: 16px; height: 16px; accent-color: #c9a24a; box-shadow: none; }
   .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
   .cal .wd { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1.5px; color: var(--cream-3); text-align: center; padding-bottom: 4px; }
-  .cal .cell { min-height: 68px; min-width: 0; overflow: hidden; border-radius: 4px; border: 1px solid rgba(201,162,74,.14); background: rgba(255,240,210,.03); padding: 5px 6px; position: relative; font-size: 12.5px; line-height: 1.25; }
+  .cal .cell { min-height: 92px; min-width: 0; overflow: hidden; cursor: pointer; transition: background .15s; border-radius: 4px; border: 1px solid rgba(201,162,74,.14); background: rgba(255,240,210,.03); padding: 5px 6px; position: relative; font-size: 12.5px; line-height: 1.25; }
   .cal .cell.other { opacity: .35; }
+  .cal .cell:hover { background: rgba(201,162,74,.08); }
   .cal .cell .n { font-family: 'Cinzel', serif; font-size: 12px; color: var(--cream-2); display: block; }
   .cal .cell.today { border-color: rgba(201,162,74,.6); background: rgba(201,162,74,.10); }
   .cal .cell.today .n { color: var(--gold-hi); }
   .cal .cell.done { border-left: 3px solid var(--moss); }
-  .cal .cell .tag { display: block; margin-top: 3px; font-style: italic; color: var(--cream-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cal .cell .tag.plan { color: var(--cream-3); }
+  .cal .cell .tag { display: block; margin-top: 3px; font-size: 14px; font-style: italic; color: var(--cream-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.25; }
+  .cal .cell .tag.ev { font-style: normal; font-weight: 600; color: var(--cream); border-left: 2px solid var(--gold); padding-left: 5px; }
+  .cal .cell .tag.ev-mock { color: var(--gold-hi); border-color: var(--gold-hi); }
+  .cal .cell .tag.ev-tutoring { border-color: var(--moss); }
+  .cal .cell .tag.ev-class { border-color: rgba(239,227,200,.5); }
+  .cal .cell .tag.ev-other { border-color: rgba(239,227,200,.3); font-weight: 500; }
+  .cal .cell .tag.plan { color: var(--cream-2); }
   .cal .cell .tag.rest { color: rgba(142,37,48,.9); font-style: normal; font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px; }
   .cal .cell .q { position: absolute; right: 6px; top: 5px; font-size: 11px; color: var(--moss); font-weight: 600; }
-  .cal .cell .tag.plan b { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 1px; color: var(--gold); font-style: normal; margin-right: 4px; }
-  .cal.week .cell { min-height: 260px; }
+  .cal .cell .tag.plan b { font-family: 'Cinzel', serif; font-size: 9.5px; letter-spacing: 1px; color: var(--gold); font-style: normal; margin-right: 5px; }
+  .cal.week .cell { min-height: 300px; }
+  .cal.week .cell .tag { font-size: 15.5px; margin-top: 6px; }
   .cal.week .cell .tag { white-space: normal; }
   .cal.week .cell .n { font-size: 13px; margin-bottom: 6px; }
 
@@ -242,6 +251,13 @@
   .settings .full { grid-column: 1 / -1; }
   .settings p { margin: 6px 0 0; font-size: 14px; color: var(--cream-3); font-style: italic; }
 
+  .modal { position: fixed; inset: 0; z-index: 55; background: rgba(4,2,1,.55); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal.open { display: flex; }
+  .daybox { width: min(560px, 100%); }
+  .daylist { max-height: 240px; }
+  .daylist li { display: flex; align-items: center; gap: 10px; }
+  .daylist li .x { margin-left: auto; background: none; border: 0; color: var(--cream-3); font-size: 18px; cursor: pointer; }
+  .daylist li .x:hover { color: var(--gold-hi); }
   .toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); z-index: 50; background: linear-gradient(170deg, #eed58a, #c9a24a); color: #3a2708; padding: 11px 20px; border-radius: 5px; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px; opacity: 0; transition: .3s; box-shadow: 0 10px 26px rgba(0,0,0,.7); pointer-events: none; border: 1px solid #6b4d15; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   canvas#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 40; }
@@ -397,7 +413,7 @@
 
 <div class="footer">
   Everything lives in this browser only. <button id="settingsBtn">Settings</button> · <button id="exportBtn">Export data</button> · <button id="resetBtn">Reset</button><br>
-  <span style="font-size:12px;opacity:.7">Build v32 · 23 Sep 2026 · press D for alignment guides</span>
+  <span style="font-size:12px;opacity:.7">Build v34 · 23 Sep 2026 · press D for alignment guides</span>
   <div class="settings" id="settings">
     <div class="grid">
       <label class="full">Gemini API key<input type="password" id="setKey" placeholder="paste your key, it stays in this browser"></label>
@@ -408,6 +424,18 @@
   </div>
 </div>
 
+<div class="modal" id="dayModal">
+  <div class="panel daybox">
+    <button class="reset-btn" id="dayClose" title="Close" style="font-size:20px;line-height:1">×</button>
+    <h2 id="dayTitle">DAY</h2>
+    <ul class="lessons daylist" id="dayList"></ul>
+    <div class="row" style="margin-top:14px">
+      <select id="evType" style="max-width:150px"><option value="tutoring">Tutoring</option><option value="mock">Mock exam</option><option value="class">Class</option><option value="other">Note</option></select>
+      <input id="evTitle" placeholder="e.g. with Sarah, 6pm · Official practice test 3" autocomplete="off">
+      <button class="btn sm" id="evAdd">Add</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <canvas id="confetti"></canvas>
 
@@ -467,6 +495,7 @@ function placeHearth() {
   placeSticky();
   if (fireResize) fireResize();
 }
+const dim = document.getElementById("dim");
 const SLIDE_D = 700;   // scroll distance over which the lower panels slide into place
 function placeSticky() {
   if (innerWidth <= 1000) return;
@@ -477,25 +506,29 @@ function placeSticky() {
   const logTop = kiwi.getBoundingClientRect().top - colTop;
   const rowTop = quest.getBoundingClientRect().bottom - board.top + 14;
   rs.setProperty("--logTop", logTop + "px"); rs.setProperty("--rowTop", rowTop + "px");
+  GEO.logTop = logTop; GEO.rowTop = rowTop; GEO.logH = document.getElementById("logslide").offsetHeight;
   const lowH = Math.max(340, innerHeight - rowTop - 24); rs.setProperty("--lowh", lowH + "px");   // boxes fill to the bottom, calendar sits exactly one gap below
   rs.setProperty("--boardH", (rowTop + lowH + 24) + "px");
   rs.setProperty("--s3h", Math.max(380, s1.offsetHeight) + "px");
   rs.setProperty("--D", SLIDE_D + "px");
   slide();
 }
+const GEO = { logTop: 160, rowTop: 746, logH: 500 };
+let slideTicking = false;
 function slide() {
+  slideTicking = false;
   if (innerWidth <= 1000) return;
   const p = Math.max(0, Math.min(1, scrollY / SLIDE_D)), e = 1 - Math.pow(1 - p, 2);   // ease-out
   const log = document.getElementById("logslide"), lower = document.getElementById("lower");
-  const logTop = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--logTop")) || 160;
-  const rowTop = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--rowTop")) || 746;
-  log.style.transform = `translateY(${((1 - e) * (innerHeight - logTop)).toFixed(1)}px)`;
-  lower.style.transform = `translateY(${((1 - e) * (innerHeight - rowTop + 24 + log.offsetHeight + 24)).toFixed(1)}px)`;
+  log.style.transform = `translate3d(0, ${((1 - e) * (innerHeight - GEO.logTop)).toFixed(1)}px, 0)`;
+  lower.style.transform = `translate3d(0, ${((1 - e) * (innerHeight - GEO.rowTop + 24 + GEO.logH + 24)).toFixed(1)}px, 0)`;
+  dim.style.background = `rgba(6,3,2,${(p * .5).toFixed(3)})`;
+  document.getElementById("scrollHint").classList.toggle("gone", scrollY > 80);
 }
 addEventListener("load", placeSticky);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeSticky);
 if (window.ResizeObserver) new ResizeObserver(placeSticky).observe(document.getElementById("s1"));
-addEventListener("scroll", () => requestAnimationFrame(slide), { passive: true });
+addEventListener("scroll", () => { if (!slideTicking) { slideTicking = true; requestAnimationFrame(slide); } }, { passive: true });
 // the board clips its overflow; never let focus or programmatic scrolling shift it
 document.getElementById("board").addEventListener("scroll", e => { e.target.scrollTop = 0; e.target.scrollLeft = 0; });
 photo.addEventListener("load", placeHearth);
@@ -509,7 +542,7 @@ addEventListener("resize", placeHearth);
   const c = document.getElementById("fire"), ctx = c.getContext("2d");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let W = 0, H = 0, dpr = 1;
-  fireResize = function () { dpr = Math.min(devicePixelRatio || 1, 2); const r = c.getBoundingClientRect(); W = r.width; H = r.height; c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  fireResize = function () { dpr = Math.min(devicePixelRatio || 1, 1.5); const r = c.getBoundingClientRect(); W = r.width; H = r.height; c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
   fireResize();
   const flames = [], embers = [];
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -570,7 +603,7 @@ addEventListener("resize", placeHearth);
   let W, H; const P = [];
   function rs() { W = c.width = innerWidth; H = c.height = innerHeight; }
   rs(); addEventListener("resize", rs);
-  for (let i = 0; i < 46; i++) P.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, r: .6 + Math.random() * 1.6, s: .08 + Math.random() * .25, ph: Math.random() * 6.28, a: .15 + Math.random() * .4 });
+  for (let i = 0; i < 30; i++) P.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, r: .6 + Math.random() * 1.6, s: .08 + Math.random() * .25, ph: Math.random() * 6.28, a: .15 + Math.random() * .4 });
   (function f(now) {
     ctx.clearRect(0, 0, W, H); const t = now / 1000;
     for (const p of P) { p.y -= p.s; p.x += Math.sin(t * .5 + p.ph) * .18; if (p.y < -5) { p.y = H + 5; p.x = Math.random() * W; } const tw = .55 + .45 * Math.sin(t * 1.3 + p.ph); ctx.fillStyle = `rgba(255,215,140,${p.a * tw})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.28); ctx.fill(); }
@@ -584,8 +617,6 @@ addEventListener("resize", placeHearth);
   addEventListener("mousemove", e => { const dx = (e.clientX / innerWidth - .5), dy = (e.clientY / innerHeight - .5); sc.style.transform = `translate(${(-dx * 14).toFixed(1)}px, ${(-dy * 10).toFixed(1)}px)`; }, { passive: true });
 })();
 addEventListener("keydown", e => { if ((e.key === "d" || e.key === "D") && !/input|textarea/i.test(e.target.tagName)) document.body.classList.toggle("debug"); });
-const dim = document.getElementById("dim");
-addEventListener("scroll", () => { dim.style.background = `rgba(6,3,2,${Math.min(scrollY / 700, .5)})`; document.getElementById("scrollHint").classList.toggle("gone", scrollY > 80); }, { passive: true });
 
 /* =========================================================
    DATA
@@ -626,15 +657,15 @@ const CHAT_REPLIES = {
 };
 
 const LS_KEY = "gmat-grimoire-v1", AI_KEY = "gmat-grimoire-ai";
-const defaultState = () => ({ sessions: [], moods: [], testDate: "", freezes: 0, skips: {}, accepted: {}, swapIndex: 0, quest: null, calMode: "month", showPlan: true, chats: { kiwi: [], buddy: [] }, current: { kiwi: null, buddy: null } });
+const defaultState = () => ({ sessions: [], moods: [], testDate: "", freezes: 0, skips: {}, accepted: {}, swapIndex: 0, quest: null, calMode: "month", showPlan: true, chats: { kiwi: [], buddy: [] }, current: { kiwi: null, buddy: null }, events: {} });
 let S = load();
 S.sessions.forEach(s => { if (TOPIC_MIGRATE[s.topic]) s.topic = TOPIC_MIGRATE[s.topic]; });
-if (!S.chats) S.chats = { kiwi: [], buddy: [] }; if (!S.current) S.current = { kiwi: null, buddy: null };
+if (!S.chats) S.chats = { kiwi: [], buddy: [] }; if (!S.current) S.current = { kiwi: null, buddy: null }; if (!S.events) S.events = {};
 function load() { try { const raw = localStorage.getItem(LS_KEY); if (raw) return { ...defaultState(), ...JSON.parse(raw) }; } catch (e) {} return defaultState(); }
 function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
 /* Put the shared Gemini key here so nobody has to enter one. A key in a public page can be read by anyone,
    so restrict it in Google AI Studio / Cloud Console to the site's domain (HTTP referrer) and cap its quota. */
-const BUILT_IN_GEMINI_KEY = "";
+const BUILT_IN_GEMINI_KEY = (typeof window.GEMINI_KEY === "string") ? window.GEMINI_KEY.trim() : "";   // served from config.js next to this page
 let AICFG = { key: "", model: "gemini-3.5-flash-lite" };
 const MODEL_FALLBACKS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.8-flash", "gemini-2.5-flash-lite"];
 try { AICFG = { ...AICFG, ...JSON.parse(localStorage.getItem(AI_KEY) || "{}") }; } catch (e) {}
@@ -705,25 +736,27 @@ function renderHeader() {
 }
 /* suggested plan: two half-day slots per day, alternating sections, for the next 14 days */
 function buildPlan() {
-  // two half-day slots per day; sections rotate Quant → Verbal → Data Insights, and within a section
-  // topics come in ranked order (weakest first), each used once before any repeats
-  const ranked = rankedTopics(); const plan = {};
-  const CYCLE = ["Quant", "Verbal", "Data Insights"]; let cyc = 0;
-  const queues = {}; const refill = sec => { queues[sec] = ranked.filter(r => r.sec === sec).map(r => r.topic); };
-  CYCLE.forEach(refill);
-  const removeFromQueue = topic => { for (const sec in queues) queues[sec] = queues[sec].filter(x => x !== topic); };
-  const take = avoidSec => {
-    for (let i = 0; i < 6; i++) { const sec = CYCLE[cyc % 3]; cyc++; if (sec === avoidSec) continue; if (!queues[sec].length) refill(sec); return { topic: queues[sec].shift(), sec }; }
-    const sec = CYCLE[cyc++ % 3]; if (!queues[sec].length) refill(sec); return { topic: queues[sec].shift(), sec };
+  // two half-day slots a day, chosen from the same ranking that picks today's quest
+  // (recent error rate, staleness, how it felt, today's mood). Every topic is used once before any repeats,
+  // the two slots of a day are always different sections, and a mock exam day is kept for the mock.
+  const ranked = rankedTopics(); const plan = {}; let pool = ranked.slice(); let lastSec = null;
+  const take = (avoidSec) => {
+    if (!pool.length) pool = ranked.slice();
+    let cands = pool.filter(r => r.sec !== avoidSec); if (!cands.length) cands = pool.slice();
+    let best = cands[0];
+    const alt = cands.find(r => r.sec !== lastSec); if (alt && best.score - alt.score < 0.4) best = alt;   // mild variety, score wins otherwise
+    pool = pool.filter(r => r.topic !== best.topic); return best;
   };
   for (let d = 0; d < 14; d++) {
     const dt = new Date(); dt.setDate(dt.getDate() + d); const k = todayKey(dt);
+    const mock = (S.events?.[k] || []).find(e => e.type === "mock");
+    if (mock) { plan[k] = [`Mock exam${mock.title ? ": " + mock.title : ""}`, "Review every mistake from the mock"]; lastSec = null; continue; }
     let am;
-    if (S.accepted[k]) { const [sec, topic] = S.accepted[k].split(":"); am = { topic, sec }; removeFromQueue(topic); }
-    else if (d === 0 && S.quest) { am = { topic: S.quest.topic, sec: S.quest.sec }; removeFromQueue(am.topic); }
+    if (S.accepted[k]) { const [sec, topic] = S.accepted[k].split(":"); am = { topic, sec }; pool = pool.filter(r => r.topic !== topic); }
+    else if (d === 0 && S.quest) { am = { topic: S.quest.topic, sec: S.quest.sec }; pool = pool.filter(r => r.topic !== am.topic); }
     else am = take(null);
     const pm = take(am.sec);
-    plan[k] = [am.topic, pm.topic];
+    plan[k] = [am.topic, pm.topic]; lastSec = pm.sec;
   }
   return plan;
 }
@@ -744,7 +777,8 @@ function cellHtml(d, k, today, plan) {
   let html = `<span class="n">${d.getDate()}</span>`;
   if (sess.length) { const q = sess.reduce((a, s) => a + (+s.done || 0), 0); html += `<span class="q">${q}q</span>`; const bySec = {}; sess.forEach(s => { bySec[s.section] = (bySec[s.section] || 0) + (+s.done || 0); }); html += Object.entries(bySec).map(([sec, n]) => `<span class="tag">${SHORT[sec]} · ${n}q</span>`).join(""); }
   else if (S.skips[k]) html += `<span class="tag rest">REST</span>`;
-  if (S.showPlan && plan[k] && k >= today) html += `<span class="tag plan"><b>AM</b>${plan[k][0]}</span><span class="tag plan"><b>PM</b>${plan[k][1]}</span>`;
+  for (const ev of (S.events[k] || [])) html += `<span class="tag ev ev-${ev.type}">${escapeHtml(EV_LABEL[ev.type] + (ev.title ? " · " + ev.title : ""))}</span>`;
+  if (S.showPlan && plan[k] && k >= today) html += `<span class="tag plan"><b>AM</b>${escapeHtml(plan[k][0])}</span><span class="tag plan"><b>PM</b>${escapeHtml(plan[k][1])}</span>`;
   return html;
 }
 function renderCalendar() {
@@ -771,9 +805,33 @@ function renderCalendar() {
     const k = todayKey(c.d); const el = document.createElement("div"); el.className = "cell" + (c.other ? " other" : "");
     if (k === today) el.classList.add("today");
     if (S.sessions.some(s => s.date === k)) el.classList.add("done");
-    el.innerHTML = cellHtml(c.d, k, today, plan); wrap.appendChild(el);
+    el.innerHTML = cellHtml(c.d, k, today, plan); el.dataset.date = k; el.title = "Click to add tutoring, a mock exam or a note";
+    el.addEventListener("click", () => openDay(k)); wrap.appendChild(el);
   });
 }
+/* day editor: add tutoring sessions, mock exams, notes */
+const EV_LABEL = { mock: "Mock exam", tutoring: "Tutoring", class: "Class", other: "Note" };
+let dayOpen = null;
+function openDay(k) {
+  dayOpen = k; const d = new Date(k + "T12:00");
+  $("dayTitle").textContent = d.toLocaleDateString("en", { weekday: "long", day: "numeric", month: "long" }).toUpperCase();
+  $("evTitle").value = ""; renderDayList(); $("dayModal").classList.add("open"); setTimeout(() => $("evTitle").focus(), 50);
+}
+function renderDayList() {
+  const list = $("dayList"); list.innerHTML = "";
+  const evs = S.events[dayOpen] || [];
+  if (!evs.length) { list.innerHTML = '<li class="muted ital" style="border:0;background:none">Nothing planned on this day yet.</li>'; return; }
+  for (const ev of evs) { const li = document.createElement("li"); li.innerHTML = `<span class="tag ev ev-${ev.type}" style="display:inline">${escapeHtml(EV_LABEL[ev.type])}</span> ${escapeHtml(ev.title || "")}<button class="x" title="Remove">×</button>`; li.querySelector(".x").addEventListener("click", () => { S.events[dayOpen] = evs.filter(e => e.id !== ev.id); if (!S.events[dayOpen].length) delete S.events[dayOpen]; save(); renderDayList(); renderCalendar(); }); list.appendChild(li); }
+}
+$("evAdd").addEventListener("click", () => {
+  const title = $("evTitle").value.trim(), type = $("evType").value;
+  (S.events[dayOpen] = S.events[dayOpen] || []).push({ id: Date.now().toString(36), type, title }); save();
+  $("evTitle").value = ""; renderDayList(); renderCalendar(); toast(EV_LABEL[type] + " added");
+});
+$("evTitle").addEventListener("keydown", e => { if (e.key === "Enter") $("evAdd").click(); });
+$("dayClose").addEventListener("click", () => $("dayModal").classList.remove("open"));
+$("dayModal").addEventListener("click", e => { if (e.target === $("dayModal")) $("dayModal").classList.remove("open"); });
+addEventListener("keydown", e => { if (e.key === "Escape") $("dayModal").classList.remove("open"); });
 function renderHeat() {
   const st = topicStats(14); const wrap = $("heat"); wrap.innerHTML = "";
   const pct = (w, d) => Math.round(w / d * 100);
@@ -831,6 +889,7 @@ function studyContext() {
     `Today's suggested quest: ${S.quest?.topic} (${S.quest?.sec}).`,
     lines.length ? "Last 14 days by topic:\n" + lines.join("\n") : "No sessions logged in the last 14 days.",
     lessons.length ? "Recent lessons the student wrote:\n" + lessons.join("\n") : "",
+    upcomingEvents().length ? "Upcoming on the calendar:\n" + upcomingEvents().join("\n") : "",
   ].filter(Boolean).join("\n");
 }
 const PROMPTS = {
@@ -866,7 +925,7 @@ async function gemini(system, history, userText) {
 const AI = {
   async chat(text) {
     if (AICFG.key) {
-      return gemini(PROMPTS.buddy + "\n\nSTUDENT DATA:\n" + studyContext(), historyOf("buddy").slice(0, -1), text);
+      return gemini(PROMPTS.buddy + "\n\nSTUDENT DATA:\n" + studyContext() + "\n\n" + memoryOf("buddy"), historyOf("buddy").slice(0, -1), text);
     }
     await new Promise(r => setTimeout(r, 400));
     const t = text.toLowerCase();
@@ -875,7 +934,7 @@ const AI = {
     return pick(CHAT_REPLIES.default);
   },
   async feeling(mood, text) {
-    if (AICFG.key) return gemini(PROMPTS.kiwi + "\n\nABOUT THE STUDENT:\n" + kiwiContext(), historyOf("kiwi").slice(0, -1), mood ? (text ? `I'm feeling ${mood}. ${text}` : `I'm feeling ${mood}.`) : text);
+    if (AICFG.key) return gemini(PROMPTS.kiwi + "\n\nABOUT THE STUDENT:\n" + kiwiContext() + "\n\n" + memoryOf("kiwi"), historyOf("kiwi").slice(0, -1), mood ? (text ? `I'm feeling ${mood}. ${text}` : `I'm feeling ${mood}.`) : text);
     await new Promise(r => setTimeout(r, 400));
     let r = pick(MOOD_REPLIES[mood] || MOOD_REPLIES.okay);
     if (mood === "tired" && S.quest?.sec === "Quant") r += " I've noted it: swap to Verbal if Quant feels heavy.";
@@ -923,6 +982,21 @@ function pushMsg(bot, text, who) {
   const log = $(LOG_ID[bot]); const el = document.createElement("div"); el.className = "msg " + who; el.textContent = text; log.appendChild(el); log.scrollTop = log.scrollHeight;
   if (who === "me") renderPast(bot);
   return el;
+}
+function memoryOf(bot) {
+  const past = S.chats[bot].filter(c => c.id !== S.current[bot] && c.msgs.some(m => m.who === "me")).slice(-6).reverse();
+  if (!past.length) return "";
+  const cut = (s, n) => s.length > n ? s.slice(0, n) + "…" : s;
+  return "EARLIER CONVERSATIONS WITH THIS STUDENT (your memory; refer back naturally when it helps, never recite it):\n" + past.map(c => {
+    const me = c.msgs.filter(m => m.who === "me").slice(0, 3).map(m => cut(m.text, 140)).join(" | ");
+    const last = [...c.msgs].reverse().find(m => m.who === "bot");
+    return `- ${c.date}: student said: ${me}${last ? " — you answered: " + cut(last.text, 160) : ""}`;
+  }).join("\n");
+}
+function upcomingEvents() {
+  const today = todayKey(); const out = [];
+  Object.keys(S.events).sort().forEach(k => { if (k >= today) for (const ev of S.events[k]) out.push(`${k}: ${EV_LABEL[ev.type]}${ev.title ? " (" + ev.title + ")" : ""}`); });
+  return out.slice(0, 10);
 }
 function historyOf(bot) { return chatOf(bot).msgs.filter(m => m.who !== "err").slice(-10).map(m => ({ role: m.who === "me" ? "user" : "model", parts: [{ text: m.text }] })); }
 function addMsg(text, who) { return pushMsg("buddy", text, who); }
