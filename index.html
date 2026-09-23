@@ -412,8 +412,8 @@
 <div class="scroll-hint" id="scrollHint">SCROLL TO LOG A SESSION</div>
 
 <div class="footer">
-  Everything lives in this browser only. <button id="settingsBtn">Settings</button> · <button id="exportBtn">Export data</button> · <button id="resetBtn">Reset</button><br>
-  <span style="font-size:12px;opacity:.7">Build v34 · 23 Sep 2026 · press D for alignment guides</span>
+  Everything lives in this browser only. <button id="settingsBtn">Settings</button> · <button id="exportBtn">Export data</button> · <button id="resetBtn" title="Deletes every session, chat, lesson and event stored in this browser">Wipe all data</button><br>
+  <span style="font-size:12px;opacity:.7">Build v35 · 23 Sep 2026 · press D for alignment guides</span>
   <div class="settings" id="settings">
     <div class="grid">
       <label class="full">Gemini API key<input type="password" id="setKey" placeholder="paste your key, it stays in this browser"></label>
@@ -430,8 +430,9 @@
     <h2 id="dayTitle">DAY</h2>
     <ul class="lessons daylist" id="dayList"></ul>
     <div class="row" style="margin-top:14px">
-      <select id="evType" style="max-width:150px"><option value="tutoring">Tutoring</option><option value="mock">Mock exam</option><option value="class">Class</option><option value="other">Note</option></select>
-      <input id="evTitle" placeholder="e.g. with Sarah, 6pm · Official practice test 3" autocomplete="off">
+      <select id="evType" style="max-width:140px"><option value="tutoring">Tutoring</option><option value="mock">Mock exam</option><option value="class">Class</option><option value="other">Note</option></select>
+      <input type="time" id="evTime" style="max-width:120px" title="Time (optional)">
+      <input id="evTitle" placeholder="e.g. with Sarah · Official practice test 3" autocomplete="off">
       <button class="btn sm" id="evAdd">Add</button>
     </div>
   </div>
@@ -660,7 +661,7 @@ const LS_KEY = "gmat-grimoire-v1", AI_KEY = "gmat-grimoire-ai";
 const defaultState = () => ({ sessions: [], moods: [], testDate: "", freezes: 0, skips: {}, accepted: {}, swapIndex: 0, quest: null, calMode: "month", showPlan: true, chats: { kiwi: [], buddy: [] }, current: { kiwi: null, buddy: null }, events: {} });
 let S = load();
 S.sessions.forEach(s => { if (TOPIC_MIGRATE[s.topic]) s.topic = TOPIC_MIGRATE[s.topic]; });
-if (!S.chats) S.chats = { kiwi: [], buddy: [] }; if (!S.current) S.current = { kiwi: null, buddy: null }; if (!S.events) S.events = {};
+if (!S.chats) S.chats = { kiwi: [], buddy: [] }; if (!S.current) S.current = { kiwi: null, buddy: null }; if (!S.events) S.events = {}; Object.keys(S.events).forEach(k => S.events[k].sort((a, b) => (a.time || "99") < (b.time || "99") ? -1 : 1));
 function load() { try { const raw = localStorage.getItem(LS_KEY); if (raw) return { ...defaultState(), ...JSON.parse(raw) }; } catch (e) {} return defaultState(); }
 function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
 /* Put the shared Gemini key here so nobody has to enter one. A key in a public page can be read by anyone,
@@ -735,28 +736,35 @@ function renderHeader() {
   $("statFreeze").textContent = S.freezes ? "❄".repeat(Math.min(S.freezes, 3)) : "";
 }
 /* suggested plan: two half-day slots per day, alternating sections, for the next 14 days */
+const SLOT_LABEL = ["9 AM", "2 PM"];
 function buildPlan() {
-  // two half-day slots a day, chosen from the same ranking that picks today's quest
+  // two half-day slots (9 am and 2 pm) chosen from the same ranking that picks today's quest
   // (recent error rate, staleness, how it felt, today's mood). Every topic is used once before any repeats,
-  // the two slots of a day are always different sections, and a mock exam day is kept for the mock.
+  // the two slots of a day are different sections, a mock exam day is kept for the mock, and a slot already
+  // taken by a timed event (tutoring, class) is left to that event.
   const ranked = rankedTopics(); const plan = {}; let pool = ranked.slice(); let lastSec = null;
   const take = (avoidSec) => {
     if (!pool.length) pool = ranked.slice();
     let cands = pool.filter(r => r.sec !== avoidSec); if (!cands.length) cands = pool.slice();
     let best = cands[0];
-    const alt = cands.find(r => r.sec !== lastSec); if (alt && best.score - alt.score < 0.4) best = alt;   // mild variety, score wins otherwise
+    const alt = cands.find(r => r.sec !== lastSec); if (alt && best.score - alt.score < 0.4) best = alt;
     pool = pool.filter(r => r.topic !== best.topic); return best;
   };
   for (let d = 0; d < 14; d++) {
     const dt = new Date(); dt.setDate(dt.getDate() + d); const k = todayKey(dt);
-    const mock = (S.events?.[k] || []).find(e => e.type === "mock");
-    if (mock) { plan[k] = [`Mock exam${mock.title ? ": " + mock.title : ""}`, "Review every mistake from the mock"]; lastSec = null; continue; }
-    let am;
-    if (S.accepted[k]) { const [sec, topic] = S.accepted[k].split(":"); am = { topic, sec }; pool = pool.filter(r => r.topic !== topic); }
-    else if (d === 0 && S.quest) { am = { topic: S.quest.topic, sec: S.quest.sec }; pool = pool.filter(r => r.topic !== am.topic); }
-    else am = take(null);
-    const pm = take(am.sec);
-    plan[k] = [am.topic, pm.topic]; lastSec = pm.sec;
+    const evs = S.events?.[k] || [];
+    const mock = evs.find(e => e.type === "mock");
+    if (mock) { plan[k] = [null, "Review every mistake from the mock"]; lastSec = null; continue; }   // the mock itself is already listed as an event
+    const busy = [null, null];   // a timed tutoring/class fills its half of the day
+    for (const ev of evs) { if (!ev.time || ev.type === "other") continue; const h = +ev.time.split(":")[0]; const i = h < 13 ? 0 : 1; if (!busy[i]) busy[i] = `${EV_LABEL[ev.type]}${ev.title ? " · " + ev.title : ""}`; }
+    let first;
+    if (busy[0]) first = null;
+    else if (S.accepted[k]) { const [sec, topic] = S.accepted[k].split(":"); first = { topic, sec }; pool = pool.filter(r => r.topic !== topic); }
+    else if (d === 0 && S.quest) { first = { topic: S.quest.topic, sec: S.quest.sec }; pool = pool.filter(r => r.topic !== first.topic); }
+    else first = take(null);
+    const second = busy[1] ? null : take(first ? first.sec : null);
+    plan[k] = [busy[0] ? null : first.topic, busy[1] ? null : second.topic];   // a taken slot shows only the event line
+    lastSec = second ? second.sec : (first ? first.sec : lastSec);
   }
   return plan;
 }
@@ -777,8 +785,8 @@ function cellHtml(d, k, today, plan) {
   let html = `<span class="n">${d.getDate()}</span>`;
   if (sess.length) { const q = sess.reduce((a, s) => a + (+s.done || 0), 0); html += `<span class="q">${q}q</span>`; const bySec = {}; sess.forEach(s => { bySec[s.section] = (bySec[s.section] || 0) + (+s.done || 0); }); html += Object.entries(bySec).map(([sec, n]) => `<span class="tag">${SHORT[sec]} · ${n}q</span>`).join(""); }
   else if (S.skips[k]) html += `<span class="tag rest">REST</span>`;
-  for (const ev of (S.events[k] || [])) html += `<span class="tag ev ev-${ev.type}">${escapeHtml(EV_LABEL[ev.type] + (ev.title ? " · " + ev.title : ""))}</span>`;
-  if (S.showPlan && plan[k] && k >= today) html += `<span class="tag plan"><b>AM</b>${escapeHtml(plan[k][0])}</span><span class="tag plan"><b>PM</b>${escapeHtml(plan[k][1])}</span>`;
+  for (const ev of (S.events[k] || [])) html += `<span class="tag ev ev-${ev.type}">${escapeHtml(evText(ev))}</span>`;
+  if (S.showPlan && plan[k] && k >= today) html += plan[k].map((slot, i) => slot ? `<span class="tag plan"><b>${SLOT_LABEL[i]}</b>${escapeHtml(slot)}</span>` : "").join("");
   return html;
 }
 function renderCalendar() {
@@ -811,6 +819,9 @@ function renderCalendar() {
 }
 /* day editor: add tutoring sessions, mock exams, notes */
 const EV_LABEL = { mock: "Mock exam", tutoring: "Tutoring", class: "Class", other: "Note" };
+const fmtTime = t => { if (!t) return ""; const [h, m] = t.split(":").map(Number); const ap = h >= 12 ? "pm" : "am"; const hh = ((h + 11) % 12) + 1; return m ? `${hh}:${String(m).padStart(2, "0")} ${ap}` : `${hh} ${ap}`; };
+const evText = ev => `${ev.time ? fmtTime(ev.time) + " · " : ""}${EV_LABEL[ev.type]}${ev.title ? " · " + ev.title : ""}`;
+const sortDay = k => { if (S.events[k]) S.events[k].sort((a, b) => (a.time || "99") < (b.time || "99") ? -1 : 1); };
 let dayOpen = null;
 function openDay(k) {
   dayOpen = k; const d = new Date(k + "T12:00");
@@ -821,12 +832,12 @@ function renderDayList() {
   const list = $("dayList"); list.innerHTML = "";
   const evs = S.events[dayOpen] || [];
   if (!evs.length) { list.innerHTML = '<li class="muted ital" style="border:0;background:none">Nothing planned on this day yet.</li>'; return; }
-  for (const ev of evs) { const li = document.createElement("li"); li.innerHTML = `<span class="tag ev ev-${ev.type}" style="display:inline">${escapeHtml(EV_LABEL[ev.type])}</span> ${escapeHtml(ev.title || "")}<button class="x" title="Remove">×</button>`; li.querySelector(".x").addEventListener("click", () => { S.events[dayOpen] = evs.filter(e => e.id !== ev.id); if (!S.events[dayOpen].length) delete S.events[dayOpen]; save(); renderDayList(); renderCalendar(); }); list.appendChild(li); }
+  for (const ev of evs) { const li = document.createElement("li"); li.innerHTML = `<span class="tag ev ev-${ev.type}" style="display:inline">${escapeHtml(evText(ev))}</span><button class="x" title="Remove">×</button>`; li.querySelector(".x").addEventListener("click", () => { S.events[dayOpen] = evs.filter(e => e.id !== ev.id); if (!S.events[dayOpen].length) delete S.events[dayOpen]; save(); renderDayList(); renderCalendar(); }); list.appendChild(li); }
 }
 $("evAdd").addEventListener("click", () => {
-  const title = $("evTitle").value.trim(), type = $("evType").value;
-  (S.events[dayOpen] = S.events[dayOpen] || []).push({ id: Date.now().toString(36), type, title }); save();
-  $("evTitle").value = ""; renderDayList(); renderCalendar(); toast(EV_LABEL[type] + " added");
+  const title = $("evTitle").value.trim(), type = $("evType").value, time = $("evTime").value;
+  (S.events[dayOpen] = S.events[dayOpen] || []).push({ id: Date.now().toString(36), type, title, time }); sortDay(dayOpen); save();
+  $("evTitle").value = ""; $("evTime").value = ""; renderDayList(); renderCalendar(); toast(EV_LABEL[type] + " added");
 });
 $("evTitle").addEventListener("keydown", e => { if (e.key === "Enter") $("evAdd").click(); });
 $("dayClose").addEventListener("click", () => $("dayModal").classList.remove("open"));
@@ -995,7 +1006,7 @@ function memoryOf(bot) {
 }
 function upcomingEvents() {
   const today = todayKey(); const out = [];
-  Object.keys(S.events).sort().forEach(k => { if (k >= today) for (const ev of S.events[k]) out.push(`${k}: ${EV_LABEL[ev.type]}${ev.title ? " (" + ev.title + ")" : ""}`); });
+  Object.keys(S.events).sort().forEach(k => { if (k >= today) for (const ev of S.events[k]) out.push(`${k}: ${evText(ev)}`); });
   return out.slice(0, 10);
 }
 function historyOf(bot) { return chatOf(bot).msgs.filter(m => m.who !== "err").slice(-10).map(m => ({ role: m.who === "me" ? "user" : "model", parts: [{ text: m.text }] })); }
