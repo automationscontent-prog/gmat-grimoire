@@ -84,26 +84,33 @@
   .panel h2::before, .panel h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-line), transparent); }
 
   /* Owl Kiwi */
-  .kiwi { text-align: center; }
-  .kiwi .perch { position: relative; width: 104px; height: 104px; margin: -8px auto 0; display: grid; place-items: center; }
+  .kiwi { text-align: left; }
+  .kiwi-top { display: flex; gap: 12px; align-items: center; }
+  .kiwi-side { flex: 1; min-width: 0; }
+  .kiwi-log { height: 150px; margin-top: 10px; padding: 8px 4px 4px; border-top: 1px solid var(--gold-line); }
+  .past { margin-top: 8px; font-size: 14px; padding: 6px 10px; color: var(--cream-2); background: rgba(255,240,210,.03); }
+  .reset-btn { position: absolute; top: 10px; right: 12px; width: 26px; height: 26px; border: 0; background: transparent; color: rgba(239,227,200,.28); cursor: pointer; padding: 0; z-index: 2; transition: .15s; }
+  .reset-btn:hover { color: var(--gold-hi); transform: rotate(-40deg); }
+  .reset-btn svg { width: 18px; height: 18px; display: block; margin: 0 auto; }
+  .kiwi .perch { position: relative; width: 92px; height: 92px; margin: 0; flex-shrink: 0; display: grid; place-items: center; }
   .kiwi .perch::before { content: ""; position: absolute; inset: 8px; border-radius: 50%; background: radial-gradient(circle, rgba(255,190,90,.22), rgba(255,150,60,.06) 55%, transparent 72%); }
   .kiwi .perch::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(201,162,74,.35); box-shadow: inset 0 0 0 4px rgba(0,0,0,.2), inset 0 0 0 5px rgba(201,162,74,.15); }
-  .owl { width: 84px; filter: drop-shadow(0 8px 10px rgba(0,0,0,.6)); animation: bob 3.4s ease-in-out infinite; cursor: pointer; position: relative; }
+  .owl { width: 74px; filter: drop-shadow(0 8px 10px rgba(0,0,0,.6)); animation: bob 3.4s ease-in-out infinite; cursor: pointer; position: relative; }
   .owl.dance { animation: dance .55s ease-in-out 4; }
   @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
   @keyframes dance { 0%,100% { transform: rotate(0) } 25% { transform: rotate(-10deg) translateY(-6px) } 75% { transform: rotate(10deg) translateY(-6px) } }
   .owl .lid { transform-origin: center top; animation: blink 5.5s infinite; }
   .owl .lid.r { animation-delay: .05s; }
   @keyframes blink { 0%,92%,100% { transform: scaleY(0) } 95% { transform: scaleY(1) } }
-  .kiwi .name { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 4px; color: var(--gold-hi); margin: 0 0 4px; }
+  .kiwi .name { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 4px; color: var(--gold-hi); margin: 0 0 6px; text-align: center; }
   .kiwi .name::before, .kiwi .name::after { content: "✦"; color: var(--gold-line); margin: 0 10px; font-size: 8px; vertical-align: 2px; }
-  .bubble { font-size: 16px; font-style: italic; color: var(--cream); line-height: 1.3; padding: 6px 12px; min-height: 40px; border-top: 1px solid var(--gold-line); border-bottom: 1px solid var(--gold-line); }
-  .moods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-top: 12px; }
-  .mood { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1.5px; padding: 7px 4px 6px; border-radius: 4px; cursor: pointer; background: rgba(255,240,210,.04); border: 1px solid rgba(201,162,74,.22); color: var(--cream-2); transition: .15s; }
-  .mood svg { display: block; width: 22px; height: 22px; margin: 0 auto 5px; stroke: currentColor; }
+  .bubble-unused { font-size: 16px; font-style: italic; color: var(--cream); line-height: 1.3; padding: 6px 12px; min-height: 40px; border-top: 1px solid var(--gold-line); border-bottom: 1px solid var(--gold-line); }
+  .moods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 0; }
+  .mood { font-family: 'Cinzel', serif; font-size: 8.5px; letter-spacing: 1px; padding: 6px 2px 5px; border-radius: 4px; cursor: pointer; background: rgba(255,240,210,.04); border: 1px solid rgba(201,162,74,.22); color: var(--cream-2); transition: .15s; }
+  .mood svg { display: block; width: 18px; height: 18px; margin: 0 auto 4px; stroke: currentColor; }
   .mood:hover { background: rgba(201,162,74,.12); border-color: var(--gold); color: var(--gold-hi); }
   .mood.active { background: linear-gradient(170deg, #e9d28a, #c9a24a); border-color: var(--gold-hi); color: #3a2708; }
-  .row { display: flex; gap: 8px; margin-top: 10px; }
+  .row { display: flex; gap: 8px; margin-top: 8px; }
 
   /* quest card (vertical, banner look) */
   .quest { position: relative; color: var(--cream); border-radius: 6px; padding: 14px 16px 14px; background: linear-gradient(165deg, rgba(90,22,30,.82), rgba(52,12,17,.9)); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(241,217,138,.32); box-shadow: 0 30px 60px -20px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,225,170,.12); }
@@ -268,8 +275,8 @@
   </div>
       <div class="panel kiwi">
       <h2>The Owl Kiwi</h2>
-      <div class="perch">
-        <svg class="owl" id="owl" viewBox="0 0 120 130">
+      <div class="kiwi-top">
+        <div class="perch"><svg class="owl" id="owl" viewBox="0 0 120 130">
           <defs>
             <radialGradient id="body" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#8b5e3c"/><stop offset="1" stop-color="#4a2e1a"/></radialGradient>
             <radialGradient id="belly" cx="50%" cy="30%" r="70%"><stop offset="0" stop-color="#e9d3ad"/><stop offset="1" stop-color="#c2a273"/></radialGradient>
@@ -291,20 +298,20 @@
           <path d="M55 58 L65 58 L60 68 Z" fill="#d89a3a"/>
           <path d="M46 110 l-4 6 M46 110 l0 7 M46 110 l4 6" stroke="#d89a3a" stroke-width="3" stroke-linecap="round"/><path d="M74 110 l-4 6 M74 110 l0 7 M74 110 l4 6" stroke="#d89a3a" stroke-width="3" stroke-linecap="round"/>
           <path d="M34 94 Q60 108 86 94 L86 100 Q60 114 34 100 Z" fill="#8e2530"/><path d="M34 97 Q60 110 86 97" stroke="#c9a24a" stroke-width="2" fill="none"/>
-        </svg>
-      </div>
-      <div class="name">KIWI</div>
-      <div class="bubble" id="mascotSays">How are you feeling right now?</div>
-      <div class="moods">
+        </svg></div>
+        <div class="kiwi-side"><div class="name">KIWI</div><div class="moods">
         <button class="mood" data-mood="great"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 14q4 4 8 0"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.4" stroke-linecap="round"/></svg>Great</button>
         <button class="mood" data-mood="okay"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5h7"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.4" stroke-linecap="round"/></svg>Okay</button>
         <button class="mood" data-mood="tired"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9 15h6"/><path d="M7.5 9.5l3 1M16.5 9.5l-3 1" stroke-linecap="round"/></svg>Tired</button>
         <button class="mood" data-mood="stressed"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 15.5q4-3 8 0"/><path d="M7.5 9l3 1.2M16.5 9l-3 1.2" stroke-linecap="round"/></svg>Stressed</button>
+      </div></div>
       </div>
+      <div class="chat-log kiwi-log" id="kiwiLog"></div>
       <div class="row">
-        <input id="feelText" placeholder="Tell Kiwi what's on your mind…">
+        <input id="feelText" placeholder="Tell Kiwi what's on your mind…" autocomplete="off">
         <button class="btn sm" id="feelSend">Send</button>
       </div>
+      <select class="past" id="kiwiPast"></select>
     </div>
       <div class="quest" id="quest">
       <div class="lbl">TODAY'S QUEST</div>
@@ -344,6 +351,7 @@
     <div class="stack" id="s3">
       <div class="panel">
       <h2>Study Buddy</h2>
+      <button class="reset-btn" id="buddyReset" title="Start a new chat (the old one is kept in past chats)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
       <div class="ai-badge" id="aiBadge">GMAT tutor · offline replies until a Gemini key is set</div>
       <div class="chat-log" id="chatLog"></div>
       <div class="quick">
@@ -351,9 +359,10 @@
         <button class="chip" data-q="Give me a GMAT tip">GMAT tip</button>
       </div>
       <div class="chat-in">
-        <input id="chatText" placeholder="Ask anything about the GMAT…">
+        <input id="chatText" placeholder="Ask anything about the GMAT…" autocomplete="off">
         <button class="btn sm" id="chatSend">Send</button>
       </div>
+      <select class="past" id="buddyPast"></select>
     </div>
     </div>
   </div>
@@ -388,7 +397,7 @@
 
 <div class="footer">
   Everything lives in this browser only. <button id="settingsBtn">Settings</button> · <button id="exportBtn">Export data</button> · <button id="resetBtn">Reset</button><br>
-  <span style="font-size:12px;opacity:.7">Build v30 · 23 Sep 2026 · press D for alignment guides</span>
+  <span style="font-size:12px;opacity:.7">Build v32 · 23 Sep 2026 · press D for alignment guides</span>
   <div class="settings" id="settings">
     <div class="grid">
       <label class="full">Gemini API key<input type="password" id="setKey" placeholder="paste your key, it stays in this browser"></label>
@@ -487,6 +496,8 @@ addEventListener("load", placeSticky);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeSticky);
 if (window.ResizeObserver) new ResizeObserver(placeSticky).observe(document.getElementById("s1"));
 addEventListener("scroll", () => requestAnimationFrame(slide), { passive: true });
+// the board clips its overflow; never let focus or programmatic scrolling shift it
+document.getElementById("board").addEventListener("scroll", e => { e.target.scrollTop = 0; e.target.scrollLeft = 0; });
 photo.addEventListener("load", placeHearth);
 if (photo.complete && photo.naturalWidth) placeHearth();
 addEventListener("resize", placeHearth);
@@ -615,14 +626,19 @@ const CHAT_REPLIES = {
 };
 
 const LS_KEY = "gmat-grimoire-v1", AI_KEY = "gmat-grimoire-ai";
-const defaultState = () => ({ sessions: [], moods: [], testDate: "", freezes: 0, skips: {}, accepted: {}, swapIndex: 0, quest: null, calMode: "month", showPlan: true });
+const defaultState = () => ({ sessions: [], moods: [], testDate: "", freezes: 0, skips: {}, accepted: {}, swapIndex: 0, quest: null, calMode: "month", showPlan: true, chats: { kiwi: [], buddy: [] }, current: { kiwi: null, buddy: null } });
 let S = load();
 S.sessions.forEach(s => { if (TOPIC_MIGRATE[s.topic]) s.topic = TOPIC_MIGRATE[s.topic]; });
+if (!S.chats) S.chats = { kiwi: [], buddy: [] }; if (!S.current) S.current = { kiwi: null, buddy: null };
 function load() { try { const raw = localStorage.getItem(LS_KEY); if (raw) return { ...defaultState(), ...JSON.parse(raw) }; } catch (e) {} return defaultState(); }
 function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+/* Put the shared Gemini key here so nobody has to enter one. A key in a public page can be read by anyone,
+   so restrict it in Google AI Studio / Cloud Console to the site's domain (HTTP referrer) and cap its quota. */
+const BUILT_IN_GEMINI_KEY = "";
 let AICFG = { key: "", model: "gemini-3.5-flash-lite" };
 const MODEL_FALLBACKS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.8-flash", "gemini-2.5-flash-lite"];
 try { AICFG = { ...AICFG, ...JSON.parse(localStorage.getItem(AI_KEY) || "{}") }; } catch (e) {}
+if (!AICFG.key && BUILT_IN_GEMINI_KEY) AICFG.key = BUILT_IN_GEMINI_KEY;
 const todayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return todayKey(d); };
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -781,14 +797,14 @@ function renderLessons() {
   for (const s of list.slice(0, 40)) { const li = document.createElement("li"); li.innerHTML = `${escapeHtml(s.mistake)}<small>${s.topic} · ${s.date}</small>`; ul.appendChild(li); }
 }
 function escapeHtml(t) { return t.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
-function renderAI() { $("aiBadge").textContent = AICFG.key ? `GMAT tutor · ${AICFG.model}` : "GMAT tutor · offline replies until a Gemini key is set"; $("setKey").value = AICFG.key; $("setModel").value = AICFG.model; }
+function renderAI() { $("aiBadge").textContent = AICFG.key ? `GMAT tutor · ${AICFG.model}` : "GMAT tutor · offline replies until a Gemini key is set"; $("setKey").value = AICFG.key === BUILT_IN_GEMINI_KEY ? "" : AICFG.key; $("setKey").placeholder = BUILT_IN_GEMINI_KEY ? "built-in key in use (paste one here to override)" : "paste your key, it stays in this browser"; $("setModel").value = AICFG.model; }
 function renderAll() { renderHeader(); renderQuest(); renderCalendar(); renderHeat(); renderLessons(); renderAI(); }
 
 /* =========================================================
    FX
    ========================================================= */
 function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2400); }
-function mascotSay(msg) { $("mascotSays").textContent = msg; }
+function mascotSay(msg) { pushMsg("kiwi", msg, "bot"); }
 function mascotDance() { const m = $("owl"); m.classList.remove("dance"); void m.getBoundingClientRect(); m.classList.add("dance"); }
 function confetti(big = false) {
   const c = $("confetti"), ctx = c.getContext("2d"); c.width = innerWidth; c.height = innerHeight;
@@ -801,16 +817,18 @@ function confetti(big = false) {
 /* =========================================================
    AI — Gemini when a key is set, canned replies otherwise
    ========================================================= */
+function kiwiContext() {
+  const mood = [...S.moods].reverse().find(m => m.date === todayKey());
+  return `Today: ${todayKey()}. Streak: ${streak()} days. Sessions logged: ${S.sessions.length}. Today's quest: ${S.quest?.topic || "none"}.` + (mood ? ` Mood today: ${mood.mood}.` : "");
+}
 function studyContext() {
   const st = topicStats(14); const lines = [];
   for (const [t, v] of Object.entries(st)) if (v.done) lines.push(`${t} (${v.sec}): ${v.done} questions, ${Math.round(v.wrong / v.done * 100)}% wrong, last ${v.last}`);
   const lessons = S.sessions.filter(s => s.mistake).slice(-6).map(s => `- ${s.mistake}`);
-  const mood = [...S.moods].reverse().find(m => m.date === todayKey());
   return [
     `Today: ${todayKey()}. Streak: ${streak()} days. Sessions logged: ${S.sessions.length}.`,
     S.testDate ? `Exam date: ${S.testDate}.` : "Exam date not set.",
     `Today's suggested quest: ${S.quest?.topic} (${S.quest?.sec}).`,
-    mood ? `Mood today: ${mood.mood}${mood.text ? " — " + mood.text : ""}.` : "",
     lines.length ? "Last 14 days by topic:\n" + lines.join("\n") : "No sessions logged in the last 14 days.",
     lessons.length ? "Recent lessons the student wrote:\n" + lessons.join("\n") : "",
   ].filter(Boolean).join("\n");
@@ -845,13 +863,10 @@ async function gemini(system, history, userText) {
   }
   throw lastErr || new Error("no model available");
 }
-const chatHistory = [];
 const AI = {
   async chat(text) {
     if (AICFG.key) {
-      const reply = await gemini(PROMPTS.buddy + "\n\nSTUDENT DATA:\n" + studyContext(), chatHistory.slice(-10), text);
-      chatHistory.push({ role: "user", parts: [{ text }] }, { role: "model", parts: [{ text: reply }] });
-      return reply;
+      return gemini(PROMPTS.buddy + "\n\nSTUDENT DATA:\n" + studyContext(), historyOf("buddy").slice(0, -1), text);
     }
     await new Promise(r => setTimeout(r, 400));
     const t = text.toLowerCase();
@@ -860,25 +875,79 @@ const AI = {
     return pick(CHAT_REPLIES.default);
   },
   async feeling(mood, text) {
-    if (AICFG.key) return gemini(PROMPTS.kiwi + "\n\nSTUDENT DATA:\n" + studyContext(), [], text ? `I'm feeling ${mood}. ${text}` : `I'm feeling ${mood}.`);
+    if (AICFG.key) return gemini(PROMPTS.kiwi + "\n\nABOUT THE STUDENT:\n" + kiwiContext(), historyOf("kiwi").slice(0, -1), mood ? (text ? `I'm feeling ${mood}. ${text}` : `I'm feeling ${mood}.`) : text);
     await new Promise(r => setTimeout(r, 400));
-    let r = pick(MOOD_REPLIES[mood]);
+    let r = pick(MOOD_REPLIES[mood] || MOOD_REPLIES.okay);
     if (mood === "tired" && S.quest?.sec === "Quant") r += " I've noted it: swap to Verbal if Quant feels heavy.";
     return r;
   },
 };
 
 /* =========================================================
-   CHAT
+   CHATS — one per bot, saved, new one each day
    ========================================================= */
-function addMsg(text, who) { const log = $("chatLog"); const el = document.createElement("div"); el.className = "msg " + who; el.textContent = text; log.appendChild(el); log.scrollTop = log.scrollHeight; return el; }
+const WELCOME = {
+  kiwi: () => "How are you feeling right now? Pick a mood or just tell me.",
+  buddy: () => { const st = streak(); return st > 0 ? `Welcome back. ${st}-day streak and counting. What are we working on today?` : "Hello. I'm your Study Buddy. Ask what to study, how to approach a question type, or how to pace a section."; },
+};
+const LOG_ID = { kiwi: "kiwiLog", buddy: "chatLog" };
+function chatOf(bot) {
+  let c = S.chats[bot].find(x => x.id === S.current[bot]);
+  if (!c || c.date !== todayKey()) c = newChat(bot, false);
+  return c;
+}
+function newChat(bot, force = true) {
+  const cur = S.chats[bot].find(x => x.id === S.current[bot]);
+  if (!force && cur && cur.date === todayKey()) return cur;
+  if (cur && cur.msgs.filter(m => m.who === "me").length === 0) S.chats[bot] = S.chats[bot].filter(x => x.id !== cur.id);   // drop empty chats
+  const c = { id: Date.now() + Math.random().toString(16).slice(2), date: todayKey(), title: "", msgs: [{ who: "bot", text: WELCOME[bot]() }] };
+  S.chats[bot].push(c); S.current[bot] = c.id; if (S.chats[bot].length > 60) S.chats[bot].shift(); save();
+  return c;
+}
+function renderChat(bot) {
+  const c = chatOf(bot); const log = $(LOG_ID[bot]); log.innerHTML = "";
+  if (bot === "buddy") { const o = document.createElement("div"); o.className = "opener"; o.textContent = pick(OPENERS); log.appendChild(o); }
+  for (const m of c.msgs) { const el = document.createElement("div"); el.className = "msg " + m.who; el.textContent = m.text; log.appendChild(el); }
+  log.scrollTop = log.scrollHeight; renderPast(bot);
+}
+function renderPast(bot) {
+  const sel = $(bot === "kiwi" ? "kiwiPast" : "buddyPast"); const cur = S.current[bot];
+  const list = [...S.chats[bot]].reverse();
+  sel.innerHTML = `<option value="">Past chats…</option><option value="__new">＋ New chat</option>` + list.map(c => `<option value="${c.id}"${c.id === cur ? " selected" : ""}>${new Date(c.date + "T12:00").toLocaleDateString("en", { day: "numeric", month: "short" })} · ${escapeHtml(c.title || "untitled")}</option>`).join("");
+  sel.value = cur && list.some(c => c.id === cur) ? cur : "";
+}
+function pushMsg(bot, text, who) {
+  const c = chatOf(bot); c.msgs.push({ who, text });
+  if (who === "me" && !c.title) c.title = text.slice(0, 34) + (text.length > 34 ? "…" : "");
+  save();
+  const log = $(LOG_ID[bot]); const el = document.createElement("div"); el.className = "msg " + who; el.textContent = text; log.appendChild(el); log.scrollTop = log.scrollHeight;
+  if (who === "me") renderPast(bot);
+  return el;
+}
+function historyOf(bot) { return chatOf(bot).msgs.filter(m => m.who !== "err").slice(-10).map(m => ({ role: m.who === "me" ? "user" : "model", parts: [{ text: m.text }] })); }
+function addMsg(text, who) { return pushMsg("buddy", text, who); }
+function typing(bot) { const el = document.createElement("div"); el.className = "msg bot"; el.textContent = "…"; $(LOG_ID[bot]).appendChild(el); return el; }
 async function sendChat(text) {
   if (!text.trim()) return;
-  addMsg(text, "me"); $("chatText").value = "";
-  const typing = addMsg("…", "bot");
-  try { const reply = await AI.chat(text); typing.remove(); addMsg(reply, "bot"); }
-  catch (e) { typing.remove(); addMsg("The Study Buddy couldn't reach Gemini: " + e.message, "err"); }
+  pushMsg("buddy", text, "me"); $("chatText").value = "";
+  const tp = typing("buddy");
+  try { const reply = await AI.chat(text); tp.remove(); pushMsg("buddy", reply, "bot"); }
+  catch (e) { tp.remove(); pushMsg("buddy", "The Study Buddy couldn't reach Gemini: " + e.message, "err"); }
 }
+async function sendKiwi(text, mood) {
+  pushMsg("kiwi", text, "me"); $("feelText").value = "";
+  const tp = typing("kiwi");
+  try { const reply = await AI.feeling(mood, text); tp.remove(); pushMsg("kiwi", reply, "bot"); }
+  catch (e) { tp.remove(); pushMsg("kiwi", "Kiwi's quill is out of ink: " + e.message, "err"); }
+}
+function bindPast(bot) {
+  $(bot === "kiwi" ? "kiwiPast" : "buddyPast").addEventListener("change", e => {
+    const v = e.target.value; if (!v) return;
+    if (v === "__new") newChat(bot, true); else S.current[bot] = v;
+    save(); renderChat(bot);
+  });
+}
+bindPast("kiwi"); bindPast("buddy");
 
 /* =========================================================
    EVENTS
@@ -909,34 +978,32 @@ $("checkin").addEventListener("submit", e => {
   mascotSay(milestone ? `${after} DAYS. Kiwi is losing feathers with pride.` : s.mistake ? "Lesson written down. That's one less trap on exam day." : rate <= 15 && s.done ? `${rate}% wrong? That's wizardry. Write a lesson next time anyway, they hide.` : "Sealed in the Grimoire. Every session counts, even the messy ones.");
   addMsg(`Logged: ${s.section} · ${s.topic} · ${s.done} questions, ${s.wrong} wrong. ${rate > 35 ? "Rough one, but you finished it. That matters more." : "Nicely done."}`, "bot");
 });
-document.querySelectorAll(".mood").forEach(b => b.addEventListener("click", async () => {
+document.querySelectorAll(".mood").forEach(b => b.addEventListener("click", () => {
   document.querySelectorAll(".mood").forEach(x => x.classList.remove("active")); b.classList.add("active");
   const mood = b.dataset.mood; S.moods.push({ date: todayKey(), mood, text: "" }); save(); renderQuest();
-  mascotSay("…"); try { mascotSay(await AI.feeling(mood, "")); } catch (e) { mascotSay("Kiwi's quill is out of ink: " + e.message); }
+  sendKiwi(`Feeling ${mood}.`, mood);
 }));
-$("feelSend").addEventListener("click", async () => {
+$("feelSend").addEventListener("click", () => {
   const text = $("feelText").value.trim(); if (!text) return;
-  const active = document.querySelector(".mood.active")?.dataset.mood || "okay";
-  S.moods.push({ date: todayKey(), mood: active, text }); save(); $("feelText").value = "";
-  mascotSay("…"); try { mascotSay(await AI.feeling(active, text)); } catch (e) { mascotSay("Kiwi's quill is out of ink: " + e.message); }
+  const active = document.querySelector(".mood.active")?.dataset.mood || null;
+  if (active) S.moods.push({ date: todayKey(), mood: active, text }); save();
+  sendKiwi(text, active);
 });
+$("buddyReset").addEventListener("click", () => { newChat("buddy", true); renderChat("buddy"); toast("New chat"); });
 $("feelText").addEventListener("keydown", e => { if (e.key === "Enter") $("feelSend").click(); });
 $("chatSend").addEventListener("click", () => sendChat($("chatText").value));
 $("chatText").addEventListener("keydown", e => { if (e.key === "Enter") sendChat(e.target.value); });
 document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => sendChat(c.dataset.q)));
-$("owl").addEventListener("click", () => { mascotDance(); mascotSay(pick(["Hoot.", "Yes? Kiwi is listening.", "Back to work, you.", "I believe in you. Also, hoot."])); });
+$("owl").addEventListener("click", () => { mascotDance(); });
 $("settingsBtn").addEventListener("click", () => $("settings").classList.toggle("open"));
-$("setSave").addEventListener("click", () => { AICFG = { key: $("setKey").value.trim(), model: $("setModel").value.trim() || "gemini-3.5-flash-lite" }; try { localStorage.setItem(AI_KEY, JSON.stringify(AICFG)); } catch (e) {} renderAI(); toast(AICFG.key ? "Gemini connected" : "Gemini key removed"); });
+$("setSave").addEventListener("click", () => { AICFG = { key: $("setKey").value.trim() || BUILT_IN_GEMINI_KEY, model: $("setModel").value.trim() || "gemini-3.5-flash-lite" }; try { localStorage.setItem(AI_KEY, JSON.stringify(AICFG)); } catch (e) {} renderAI(); toast(AICFG.key ? "Gemini connected" : "Gemini key removed"); });
 $("exportBtn").addEventListener("click", () => { const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `gmat-grimoire-${todayKey()}.json`; a.click(); });
 $("resetBtn").addEventListener("click", () => { if (confirm("Wipe all Grimoire data from this browser?")) { S = defaultState(); save(); renderAll(); } });
 
 /* =========================================================
    BOOT
    ========================================================= */
-renderTopicSelect(); renderAll();
-const opener = document.createElement("div"); opener.className = "opener"; opener.textContent = pick(OPENERS); $("chatLog").appendChild(opener);
-const st = streak();
-addMsg(st > 0 ? `Welcome back. ${st}-day streak and counting. What are we working on today?` : "Hello. I'm your Study Buddy. Ask what to study, how to approach a question type, or how to pace a section.", "bot");
+renderTopicSelect(); renderAll(); renderChat("kiwi"); renderChat("buddy");
 </script>
 </body>
 </html>
